@@ -1,0 +1,94 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in [
+          "spapatsaras@gmail.com",
+          "stephanos@papatsaras.com"
+        ];
+    }
+
+    function validApplication(applicationId) {
+      let data = request.resource.data;
+      return data.keys().hasAll([
+          "id", "firstName", "lastName", "email", "phone", "sponsorship",
+          "portfolio", "motivation", "customResponses", "resumeName", "resumeType",
+          "openingId", "openingTitle", "submittedAt", "status", "analysisStatus",
+          "resumeChunkCount", "resumeDataLength"
+        ])
+        && data.keys().hasOnly([
+          "id", "firstName", "lastName", "email", "phone", "sponsorship",
+          "portfolio", "motivation", "customResponses", "resumeName", "resumeType",
+          "openingId", "openingTitle", "submittedAt", "status", "analysisStatus",
+          "resumeChunkCount", "resumeDataLength"
+        ])
+        && data.id == applicationId
+        && data.firstName is string && data.firstName.size() > 0 && data.firstName.size() <= 100
+        && data.lastName is string && data.lastName.size() > 0 && data.lastName.size() <= 100
+        && data.email is string && data.email.size() > 3 && data.email.size() <= 254
+        && data.phone is string && data.phone.size() <= 60
+        && data.sponsorship in ["Yes", "No"]
+        && data.portfolio is string && data.portfolio.size() <= 500
+        && data.portfolio.matches('^$|https?://.*')
+        && data.motivation is string && data.motivation.size() > 0 && data.motivation.size() <= 1200
+        && data.customResponses is string && data.customResponses.size() <= 25000
+        && data.resumeName is string && data.resumeName.size() > 0 && data.resumeName.size() <= 255
+        && data.resumeName.matches('.*[.][pP][dD][fF]')
+        && data.resumeType == "application/pdf"
+        && data.openingId is string && data.openingId.size() > 0 && data.openingId.size() <= 150
+        && data.openingId.matches('^[A-Za-z0-9_-]+$')
+        && data.openingTitle is string && data.openingTitle.size() <= 200
+        && exists(/databases/$(database)/documents/openings/$(data.openingId))
+        && get(/databases/$(database)/documents/openings/$(data.openingId)).data.status == "open"
+        && get(/databases/$(database)/documents/openings/$(data.openingId)).data.title == data.openingTitle
+        && data.submittedAt == request.time
+        && data.status == "New"
+        && data.analysisStatus == "pending"
+        && data.resumeChunkCount is int && data.resumeChunkCount > 0 && data.resumeChunkCount <= 13
+        && data.resumeDataLength is int && data.resumeDataLength > 0 && data.resumeDataLength <= 4200000;
+    }
+
+    function validResumeChunk(applicationId) {
+      let data = request.resource.data;
+      return data.keys().hasAll(["applicationId", "index", "data"])
+        && data.keys().hasOnly(["applicationId", "index", "data"])
+        && data.applicationId == applicationId
+        && data.index is int && data.index >= 0 && data.index < 13
+        && data.data is string && data.data.size() > 0 && data.data.size() <= 340000
+        && (data.index != 0 || data.data.matches('data:application/pdf;base64,JVBERi0.*'))
+        && existsAfter(/databases/$(database)/documents/applications/$(applicationId))
+        && getAfter(/databases/$(database)/documents/applications/$(applicationId)).data.id == applicationId
+        && data.index < getAfter(/databases/$(database)/documents/applications/$(applicationId)).data.resumeChunkCount
+        && (data.index == getAfter(/databases/$(database)/documents/applications/$(applicationId)).data.resumeChunkCount - 1
+          || data.data.size() == 340000);
+    }
+
+    match /openings/{openingId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /adminAccess/{documentId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    match /applications/{applicationId} {
+      allow create: if isAdmin() || (request.auth == null && validApplication(applicationId));
+      allow read, update, delete: if isAdmin();
+
+      match /resumeChunks/{chunkId} {
+        allow create: if isAdmin() || (request.auth == null && validResumeChunk(applicationId));
+        allow read, delete: if isAdmin();
+        allow update: if false;
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
