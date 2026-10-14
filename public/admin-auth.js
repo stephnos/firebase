@@ -106,3 +106,16 @@ async function verifyAdminAccess() {
   }
 }
 
+function updateOfflineBanner() {
+  const banner = document.querySelector("#offlineBanner");
+  if (!banner) return;
+  banner.hidden = navigator.onLine;
+}
+
+function initialsFor(user) {
+  const source = String(user.displayName || user.email || "Admin").trim();
+  const parts = source.split(/\s+/).filter(Boolean);
+  if (parts.length > 1) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  return source.slice(0, 2).toUpperCase();
+}
+
