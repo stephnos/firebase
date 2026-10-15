@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Micropack | Applications</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css?v=40">
+</head>
+<body class="admin-page">
+  <section class="admin-auth-gate" id="adminAuthGate">
+    <img src="https://www.micropacksafety.com/hubfs/micropack-logo.svg" alt="Micropack, Consilium Safety Group">
+    <div><p class="kicker">Recruitment administration</p><h1>Sign in to continue.</h1><p>Use the approved Google account to access openings, applications, résumés and saved Gemini feedback.</p></div>
+    <button id="googleSignIn" type="button"><b>G</b><span>Continue with Google</span></button>
+    <p class="auth-message" id="authMessage" role="status"></p>
+  </section>
+  <div id="adminApp" hidden>
+  <p class="offline-banner" id="offlineBanner" hidden>Offline mode. Showing data previously cached on this device. Changes will sync after reconnection.</p>
+  <header class="topbar">
+    <a class="brand" href="/"><img class="official-logo" src="https://www.micropacksafety.com/hubfs/micropack-logo.svg" alt="Micropack, Consilium Safety Group"></a>
+    <nav><a class="active" href="/admin">Applications</a><a href="/">View careers page</a></nav>
+    <div class="reviewer"><span id="adminUserEmail">Admin</span><b id="adminUserInitials">SP</b><button id="adminSignOut" type="button">Sign out</button></div>
+  </header>
+  <main class="admin-main">
+    <section class="admin-heading">
+      <div><p class="kicker">Talent operations</p><h1>Applications</h1></div>
+      <div class="vacancy opening-switcher"><span>Viewing opening</span><select id="openingFilter" aria-label="Choose an opening"></select><small id="openingMeta">Aberdeen · Hybrid</small><div><a id="openingApplyLink" href="/apply">Application page</a><button id="toggleOpeningStatus" type="button">Close opening</button><button id="showOpeningForm" type="button">New opening</button></div></div>
+    </section>
+
+    <section class="new-opening-card" id="newOpeningPanel" hidden>
+      <div class="new-opening-head"><div><p class="kicker">Open a role</p><h2>Create a new opening</h2></div><button id="closeOpeningForm" type="button" aria-label="Close opening form">×</button></div>
+      <form class="new-opening-form" id="newOpeningForm">
+        <div class="field-pair"><label>Job title *<input name="title" required placeholder="Senior Software Engineer"></label><label>Department *<input name="department" required placeholder="Engineering"></label></div>
+        <div class="opening-field-grid"><label>Location *<input name="location" required placeholder="Aberdeen"></label><label>Work style *<input name="workType" required placeholder="Hybrid"></label><label>Employment type *<input name="employmentType" required placeholder="Full-time"></label></div>
+        <label>Role description *<textarea name="description" required rows="4" placeholder="Describe what this person will build and the impact of the role."></textarea></label>
+        <label>Job requirements *<textarea name="requirements" required rows="8" placeholder="Enter one job-related requirement per line."></textarea><small>Gemini will compare submitted résumés against these requirements.</small></label>
+        <fieldset class="opening-question-builder">
+          <legend>Application questions</legend>
+          <p>The standard application questions are included automatically for every opening.</p>
+          <div class="default-question-list" id="defaultQuestionList"></div>
+          <label>Role-specific questions<textarea name="customQuestions" rows="6" placeholder="Enter one applicant question per line."></textarea><small>Each question will appear as a required written response on the application form.</small></label>
+        </fieldset>
+        <div class="new-opening-actions"><button id="cancelOpeningForm" type="button">Cancel</button><button type="submit">Create opening <i>→</i></button></div>
+      </form>
+    </section>
+
+    <section class="admin-workspace">
+      <aside class="inbox-panel">
+        <div class="inbox-head"><div><span>Candidate inbox</span><b id="applicationCount">0 applications</b></div><i id="newCount">0 new</i></div>
+        <div class="application-list" id="applicationList"></div>
+        <div class="inbox-empty" id="inboxEmpty"><span>↓</span><b>No applications yet</b><p>Submissions from the careers page will appear here.</p><a id="inboxApplicationLink" href="/apply">Open application page</a></div>
+      </aside>
+
+      <section class="candidate-review">
+        <div class="review-empty" id="reviewEmpty"><div class="abstract"><span></span><span></span><span></span></div><h2>Select an application.</h2><p>Choose a candidate from the inbox to review the application and résumé.</p></div>
+        <div id="candidateReview" hidden>
+          <div class="candidate-head"><div><p class="kicker">Candidate application</p><h2 id="candidateName"></h2><a id="candidateEmail"></a></div><span class="application-status" id="applicationStatus">New</span></div>
+          <div class="application-meta"><div><span>Applied</span><b id="appliedDate"></b></div><div><span>Résumé</span><b id="resumeName"></b></div><div><span>Portfolio</span><a id="portfolioLink" target="_blank" rel="noreferrer">View link</a></div></div>
+          <article class="motivation-card"><span>Why Micropack?</span><p id="motivationText"></p></article>
+          <section class="application-answers" id="applicationAnswers"><span>Application answers</span><div id="applicationAnswerList"></div></section>
+          <section class="resume-preview">
+            <div class="resume-preview-head"><div><span>Submitted résumé</span><b id="resumeFileLabel">Document preview</b></div><a id="resumeOpen" target="_blank" rel="noreferrer">Open résumé</a></div>
+            <iframe class="resume-frame" id="resumeFrame" title="Submitted résumé preview" hidden></iframe>
+            <pre class="resume-text" id="resumeText" hidden></pre>
+          </section>
+          <div class="ai-action"><div><span>Gemini feedback</span><p id="analysisStatusText">Loading saved analysis.</p></div></div>
+          <div class="analysis-results" id="analysisResults" hidden>
+            <div class="summary-card"><span>Job-related summary</span><p id="summary"></p></div>
+            <div class="evidence-list" id="evidenceList"></div>
+            <div class="questions-card"><span>Questions for a consistent interview</span><ol id="questions"></ol></div>
+          </div>
+          <div class="error-box" id="errorBox" hidden><b>Analysis unavailable</b><p id="errorMessage"></p></div>
+          <div class="disposition" id="workflow"><span>Reviewer disposition</span><div><button type="button" data-decision="Advance to interview">Advance to interview</button><button type="button" data-decision="Hold for review">Hold for review</button><button type="button" class="close" data-decision="Close application">Close and delete</button></div><p id="decisionNote" role="status">No decision recorded.</p></div>
+        </div>
+      </section>
+    </section>
+  </main>
+  <footer><span>Micropack admin portal</span><span>HazMap3D recruitment</span></footer>
+  </div>
+  <script type="module" src="/admin-auth.js?v=40"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Apply for an open role at Micropack."><title>Apply | Micropack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css?v=45">
+</head>
+<body class="apply-page">
+  <header class="topbar apply-nav">
+    <a class="brand" href="/"><img class="official-logo" src="https://www.micropacksafety.com/hubfs/micropack-logo.svg" alt="Micropack, Consilium Safety Group"></a>
+    <span class="application-label">Job application</span>
+  </header>
+  <main class="apply-shell">
+    <aside class="job-panel">
+      <a class="back-link" href="/">← Careers</a>
+      <div class="job-copy">
+        <p class="kicker" id="jobKicker">Engineering · Aberdeen</p>
+        <h1 id="jobTitle">Software Engineer, HazMap3D</h1>
+        <p id="jobDescription">Build the 3D modelling software fire and gas engineers use to design safer industrial environments.</p>
+        <dl><div><dt>Location</dt><dd id="jobLocation">Aberdeen · Hybrid</dd></div><div><dt>Type</dt><dd id="jobType">Full-time</dd></div><div><dt>Team</dt><dd id="jobTeam">Engineering</dd></div></dl>
+      </div>
+    </aside>
+
+    <section class="form-panel">
+      <div class="form-heading"><p class="kicker">Application form</p><h2>Tell us about yourself.</h2><p>Choose an opening, then complete the required fields.</p><label class="opening-picker">Position<select id="openingSelect" name="opening"></select></label></div>
+      <form class="application-form light-form" id="applicationForm">
+        <div class="field-pair"><label>First name *<input name="firstName" required autocomplete="given-name"></label><label>Last name *<input name="lastName" required autocomplete="family-name"></label></div>
+        <label>Email address *<input name="email" type="email" required autocomplete="email"></label>
+        <label>Phone number<input name="phone" type="tel" autocomplete="tel"></label>
+        <label>Will you now or in the future require employer sponsorship to work in this role's location? *<select name="sponsorship" required><option value="">Select an answer</option><option value="Yes">Yes</option><option value="No">No</option></select></label>
+        <label>LinkedIn or portfolio<input name="portfolio" type="url" placeholder="https://"></label>
+        <label><span id="motivationLabel">Why are you interested in this role? *</span><textarea name="motivation" rows="5" required maxlength="1200" placeholder="Tell us what draws you to this role..."></textarea><small><span id="charCount">0</span>/1200</small></label>
+        <div class="custom-question-fields" id="customQuestionFields"></div>
+        <label class="candidate-upload light-upload" id="candidateDropzone">Résumé *<input id="candidateResume" name="resume" type="file" accept=".pdf,application/pdf" required><span><b id="candidateFileName">Choose a PDF file</b><small>PDF only, maximum 3 MB</small></span><i>↑</i></label>
+        <label class="consent candidate-consent light-consent"><input name="privacy" type="checkbox" required><span>I agree that Micropack may process my application information for recruitment purposes.</span></label>
+        <button class="submit-application" type="submit"><span>Submit application</span><i>→</i></button>
+        <p class="form-note light-note">Your application information is used only to assess your suitability for this role.</p>
+      </form>
+      <div class="success-card" id="successCard" hidden><span>✓</span><p class="kicker">Application received</p><h2>Thank you,<br><b id="successName"></b>.</h2><p id="successMessage">Your application has been added to the Micropack review queue.</p><button id="resetApplication">Submit another</button></div>
+    </section>
+  </main>
+  <script type="module" src="/candidate.js?v=50"></script>
+</body>
+</html>
