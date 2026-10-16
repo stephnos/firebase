@@ -106,12 +106,6 @@ async function verifyAdminAccess() {
   }
 }
 
-function updateOfflineBanner() {
-  const banner = document.querySelector("#offlineBanner");
-  if (!banner) return;
-  banner.hidden = navigator.onLine;
-}
-
 function initialsFor(user) {
   const source = String(user.displayName || user.email || "Admin").trim();
   const parts = source.split(/\s+/).filter(Boolean);
@@ -119,3 +113,9 @@ function initialsFor(user) {
   return source.slice(0, 2).toUpperCase();
 }
 
+function friendlyAuthError(error) {
+  const code = String(error && error.code || "");
+  if (code.includes("cancelled-popup-request") || code.includes("redirect-cancelled-by-user")) return "Google sign-in was cancelled.";
+  if (code.includes("operation-not-allowed")) return "Google sign-in must be enabled in Firebase Authentication before the site is restored.";
+  return "Google sign-in could not be completed. Please try again.";
+}
