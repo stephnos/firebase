@@ -48,3 +48,12 @@ async function networkFirst(request, fallbackUrl) {
   }
 }
 
+async function staleWhileRevalidate(request) {
+  const cache = await caches.open(CACHE_NAME);
+  const cached = await cache.match(request);
+  const network = fetch(request).then(response => {
+    if (response.ok || response.type === "opaque") cache.put(request, response.clone());
+    return response;
+  }).catch(() => null);
+  return cached || (await network) || Response.error();
+}
