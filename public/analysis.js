@@ -19,3 +19,30 @@ const defaultRequirements = [
 
 export const ANALYSIS_VERSION = 1;
 
+export async function analyzeResumeRecord(record) {
+  if (record.analysisStatus === "complete" && record.analysis) return record.analysis;
+  if (!record.resumeData) throw new Error("The submitted résumé is unavailable.");
+
+  const encodedResume = record.resumeData.split(",")[1];
+  if (!encodedResume) throw new Error("The submitted résumé could not be read.");
+
+  const filePart = {
+    inlineData: {
+      data: encodedResume,
+      mimeType: record.resumeType || "application/pdf"
+    }
+  };
+  const requirements = Array.isArray(record.openingRequirements) && record.openingRequirements.length
+    ? record.openingRequirements
+    : defaultRequirements;
+  const roleTitle = record.openingTitle || record.role || "Software Engineer, HazMap3D";
+  const roleDescription = record.openingDescription || "Review the résumé against the listed role requirements.";
+  const numberedRequirements = requirements.map((requirement, index) => (index + 1) + ". " + requirement).join("\n");
+  const prompt = "Review this resume for " + roleTitle + " against:\n" + numberedRequirements +
+    "\nRole context: " + roleDescription +
+    "\nReturn JSON: {\"summary\":\"2-3 factual sentences, no verdict\",\"evidence\":[{\"requirement\":\"copy requirement\",\"status\":\"met|unclear|not evidenced\",\"detail\":\"brief explicit evidence\"}],\"interviewQuestions\":[\"3 neutral questions\"]}";
+
+  const response = await model.generateContent([prompt, filePart]);
+  const text = response.response.text().replace(/^\x60\x60\x60json\s*/i, "").replace(/\x60\x60\x60\s*$/i, "").trim();
+  return JSON.parse(text);
+}
