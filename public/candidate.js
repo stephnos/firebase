@@ -148,3 +148,56 @@ function renderOpeningOptions(preferredId) {
   }
 }
 
+function selectOpening(id) {
+  selectedOpening = openings.find(opening => opening.id === id) || openings[0];
+  if (!selectedOpening) return;
+  document.title = selectedOpening.title + " | Micropack";
+  document.querySelector("#jobKicker").textContent = selectedOpening.department + " · " + selectedOpening.location;
+  document.querySelector("#jobTitle").textContent = selectedOpening.title;
+  document.querySelector("#jobDescription").textContent = selectedOpening.description;
+  document.querySelector("#jobLocation").textContent = [selectedOpening.location, selectedOpening.workType].filter(Boolean).join(" · ");
+  document.querySelector("#jobType").textContent = selectedOpening.employmentType || "Full-time";
+  document.querySelector("#jobTeam").textContent = selectedOpening.department;
+  document.querySelector("#motivationLabel").textContent = "Why are you interested in the " + selectedOpening.title + " role? *";
+  renderCustomQuestions(selectedOpening.customQuestions);
+}
+
+function renderCustomQuestions(questions) {
+  const validQuestions = Array.isArray(questions) ? questions.filter(Boolean) : [];
+  customQuestionFields.innerHTML = validQuestions.map((question, index) =>
+    '<label><span>' + escapeHtml(question) + ' *</span><textarea name="customQuestion' + index + '" data-custom-question data-question="' +
+      escapeAttribute(question) + '" rows="4" required maxlength="1200" placeholder="Your answer..."></textarea></label>'
+  ).join("");
+}
+
+function toDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).replace(/^data:[^;]*;base64,/, "data:application/pdf;base64,"));
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function isPdfFile(file) {
+  if (!/\.pdf$/i.test(file.name)) return false;
+  return await file.slice(0, 5).text() === "%PDF-";
+}
+
+function clearResumeSelection() {
+  resume.value = "";
+  document.querySelector("#candidateFileName").textContent = "Choose a PDF file";
+}
+
+function escapeHtml(value = "") {
+  return String(value).replace(/[&<>"]/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;"
+  })[character]);
+}
+
+function escapeAttribute(value = "") {
+  return escapeHtml(value);
+}
