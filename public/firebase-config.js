@@ -11,3 +11,19 @@ export const firebaseConfig = {
   messagingSenderId: "705131306248"
 };
 
+export const firebaseApp = getApps()[0] || initializeApp(firebaseConfig);
+
+initializeAppCheck(firebaseApp, {
+  provider: new ReCaptchaV3Provider("6LcIdpMtAAAAAFbfjJQVEe4YV_0UQrWv1oFkhaun"),
+  isTokenAutoRefreshEnabled: true
+});
+
+try {
+  initializeFirestore(firebaseApp, {
+    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+  });
+} catch (error) {
+  console.warn("Persistent Firestore cache is unavailable; using the in-memory cache.", error);
+}
+
+export const firebaseDb = getFirestore(firebaseApp);
