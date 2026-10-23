@@ -1,2 +1,40 @@
 export const OPENINGS_STORAGE_KEY = "micropack-openings";
 export const DEFAULT_OPENING_ID = "software-engineer-hazmap3d";
+export const DEFAULT_APPLICATION_QUESTIONS = [
+  "First name",
+  "Last name",
+  "Email address",
+  "Phone number",
+  "LinkedIn or portfolio",
+  "Why are you interested in this role?",
+  "Résumé",
+  "Will you now or in the future require employer sponsorship to work in this role's location?"
+];
+
+const DEFAULT_HAZMAP3D_QUESTIONS = [
+  "Describe a 3D, CAD, GIS, simulation, or engineering software feature you have built.",
+  "How have you tested software used in safety-critical or high-consequence engineering workflows?"
+];
+
+export const DEFAULT_OPENING = {
+  id: DEFAULT_OPENING_ID,
+  title: "Software Engineer, HazMap3D",
+  department: "Engineering",
+  location: "Aberdeen",
+  workType: "Hybrid",
+  employmentType: "Full-time",
+  description: "Build the 3D modelling software fire and gas engineers use to design safer industrial environments.",
+  requirements: [
+    "3+ years of professional software engineering experience",
+    "Experience building interactive 3D, CAD, simulation, GIS, or engineering software",
+    "Knowledge of 3D geometry, spatial analysis, or volumetric calculations",
+    "Evidence of improving rendering or computation performance for large models",
+    "Experience designing clear data visualisations or automated technical reports",
+    "Ability to collaborate with domain experts and test safety-critical engineering workflows",
+    "Eligible to work in the role's location"
+  ],
+  customQuestions: DEFAULT_HAZMAP3D_QUESTIONS,
+  status: "open",
+  createdAt: "2026-08-22T00:00:00.000Z"
+};
+
