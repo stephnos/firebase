@@ -38,3 +38,18 @@ export const DEFAULT_OPENING = {
   createdAt: "2026-08-22T00:00:00.000Z"
 };
 
+export function readOpenings() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(OPENINGS_STORAGE_KEY) || "[]");
+    const openings = Array.isArray(stored) ? stored.filter(isValidOpening).map(normalizeOpening) : [];
+    if (!openings.some(opening => opening.id === DEFAULT_OPENING_ID)) openings.unshift(DEFAULT_OPENING);
+    return openings;
+  } catch {
+    return [DEFAULT_OPENING];
+  }
+}
+
+export function saveOpenings(openings) {
+  localStorage.setItem(OPENINGS_STORAGE_KEY, JSON.stringify(openings));
+}
+
