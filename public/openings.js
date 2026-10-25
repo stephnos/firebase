@@ -74,3 +74,15 @@ function isValidOpening(opening) {
   return opening && typeof opening.id === "string" && typeof opening.title === "string";
 }
 
+export function normalizeOpening(opening) {
+  const fallbackQuestions = opening.id === DEFAULT_OPENING_ID ? DEFAULT_HAZMAP3D_QUESTIONS : [];
+  return {
+    ...opening,
+    requirements: Array.isArray(opening.requirements) ? opening.requirements : [],
+    customQuestions: Array.isArray(opening.customQuestions) ? opening.customQuestions : fallbackQuestions
+  };
+}
+
+function slugify(value) {
+  return String(value || "opening").toLowerCase().normalize("NFKD").replace(/[^\w\s-]/g, "").trim().replace(/[\s_]+/g, "-").replace(/-+/g, "-") || "opening";
+}
