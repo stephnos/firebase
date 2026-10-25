@@ -53,3 +53,24 @@ export function saveOpenings(openings) {
   localStorage.setItem(OPENINGS_STORAGE_KEY, JSON.stringify(openings));
 }
 
+export function createOpening(values) {
+  const title = String(values.title || "").trim();
+  return {
+    id: slugify(title) + "-" + crypto.randomUUID().slice(0, 8),
+    title,
+    department: String(values.department || "").trim(),
+    location: String(values.location || "").trim(),
+    workType: String(values.workType || "").trim(),
+    employmentType: String(values.employmentType || "").trim(),
+    description: String(values.description || "").trim(),
+    requirements: String(values.requirements || "").split("\n").map(value => value.trim()).filter(Boolean),
+    customQuestions: String(values.customQuestions || "").split("\n").map(value => value.trim()).filter(Boolean),
+    status: "open",
+    createdAt: new Date().toISOString()
+  };
+}
+
+function isValidOpening(opening) {
+  return opening && typeof opening.id === "string" && typeof opening.title === "string";
+}
+
