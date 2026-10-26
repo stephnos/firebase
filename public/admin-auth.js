@@ -106,6 +106,12 @@ async function verifyAdminAccess() {
   }
 }
 
+function updateOfflineBanner() {
+  const banner = document.querySelector("#offlineBanner");
+  if (!banner) return;
+  banner.hidden = navigator.onLine;
+}
+
 function initialsFor(user) {
   const source = String(user.displayName || user.email || "Admin").trim();
   const parts = source.split(/\s+/).filter(Boolean);
